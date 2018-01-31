@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <div class="title">Simple usage - localStorage <span class="counter">{{ counter || 0 }}</span></div>
         <div class="wrapper">
             <input class="add-contact" v-model="newContact" @keydown.enter="addContact" placeholder="Enter new contact - phone number"/>
 
@@ -21,7 +22,8 @@
     data () {
       return {
         newContact: '',
-        contacts: []
+        contacts: [],
+        counter: ''
       }
     },
     methods: {
@@ -31,19 +33,27 @@
           completed: false
         })
         this.newContact = ''
-        console.log('contact list: ', this.contacts)
+        this.counter = this.getCount()
+      },
+      getCount () {
+        return this.contacts.length
       }
     },
     watch: {
       contacts: {
         handler() {
-          console.log('Contacts seems to have changed!');
+          // Contacts seems to have changed now
+          localStorage.setItem('appContacts', JSON.stringify(this.contacts))
         },
         deep: true, // this directs Vue to look at all nested properties inside the array
       },
     },
     mounted () {
-      console.log('App loaded')
+      // App is loaded at this point
+      if (localStorage.getItem('appContacts')) {
+        this.contacts = JSON.parse(localStorage.getItem('appContacts'))
+        this.counter = this.getCount()
+      }
     }
   }
 </script>
@@ -56,6 +66,26 @@
         text-align: center;
         color: #2c3e50;
         margin-top: 60px;
+
+        .title {
+            font-weight: 600;
+            font-size: 28px;
+            text-align: center;
+            line-height: 45px;
+
+            span {
+                font-size: 10px;
+                font-weight: 900;
+                display: inline-block;
+                vertical-align: middle;
+                border-radius: 50%;
+                border: .5px solid rgba(220, 237, 254, .8);
+                width: 20px;
+                height: 20px;
+                line-height: 20px;
+                color: #0879EA;
+            }
+        }
 
         input {
             &.add-contact {
